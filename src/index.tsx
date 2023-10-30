@@ -1,15 +1,31 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
+import { ApolloProvider } from '@apollo/client';
+import client from './apollo';
+
+import { Global, css } from '@emotion/react';
+import Router from './router/router'
 import './index.css';
-import App from './App';
 import reportWebVitals from './reportWebVitals';
+
+const globalStyles = css`
+  body {
+    margin: 0;
+    padding: 0;
+    background-color: #4fd15a;
+  }
+`;
+
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
 );
 root.render(
   <React.StrictMode>
-    <App />
+    <Global styles={globalStyles}/>
+    <ApolloProvider client={client}>
+      <Router />
+    </ApolloProvider>
   </React.StrictMode>
 );
 
