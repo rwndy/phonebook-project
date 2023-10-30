@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useQuery } from "@apollo/client";
 import styled from "@emotion/styled";
-import { Input, Pagination } from "../../components";
+import { Input, Pagination, ListContact } from "../../components";
 import { GET_CONTACT_LIST_QUERY } from "../../apollo/queries/getContactList";
 import { contact } from "../../Models/get_contact_list";
 import { Add as AddIcon } from "@mui/icons-material";
@@ -53,22 +53,7 @@ const Home = () => {
       <Content>
         {data?.contact?.length > 0 &&
           data?.contact?.map((contact: contact) => (
-            <CardWrapper key={contact.id}>
-              <NameContact>
-                <strong>{contact.first_name}</strong> {contact.last_name}
-              </NameContact>
-              <PhoneNumber>
-                mobile phone: {contact.phones[0].number}
-              </PhoneNumber>
-              {/* <p>
-                {contact.phones.map((phone: phones, phoneIndex: number) => (
-                  <span key={phoneIndex}>
-                    Phone Number: {phone.number}
-                    {phoneIndex < contact.phones.length - 1 && <br />}
-                  </span>
-                ))}
-              </p> */}
-            </CardWrapper>
+            <ListContact contact={contact} />
           ))}
       </Content>
       <Pagination
@@ -95,24 +80,6 @@ const Main = styled.main`
 
 const Content = styled.div`
   margin-top: 2.4rem;
-`;
-
-const CardWrapper = styled.div`
-  border-bottom: 1px solid #ebffef;
-  margin-bottom: 10px;
-  padding-bottom: 8px;
-  cursor: pointer;
-`;
-
-const NameContact = styled.p`
-  font-size: 16px;
-  line-height: 18px;
-  margin-bottom: 4px;
-`;
-
-const PhoneNumber = styled.p`
-  font-size: 14px;
-  line-height: 18px;
 `;
 
 const AddForm = styled(AddIcon)`
