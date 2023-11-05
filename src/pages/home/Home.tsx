@@ -8,7 +8,7 @@ import { Add as AddIcon } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
 
 const Home = () => {
-  const [name, setSearchName] = useState<string>("");
+  const [query, setQuery] = useState<string>("");
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [totalPages, setTotalPages] = useState<number>(0);
 
@@ -17,7 +17,7 @@ const Home = () => {
   const { data, loading } = useQuery(GET_CONTACT_LIST_QUERY, {
     variables: {
       order_by: { first_name: "asc" },
-      where: { first_name: { _like: `%${name}%` } },
+      where: { first_name: { _like: `%${query}%` } },
       limit: 10,
       offset: (currentPage - 1) * 10,
     },
@@ -42,7 +42,7 @@ const Home = () => {
   };
 
   const filteredContacts = data?.contact.filter((contact: contact) =>
-    contact.first_name.toLowerCase().includes(name.toLowerCase())
+    contact.first_name.toLowerCase().includes(query.toLowerCase())
   );
 
   return (
@@ -52,8 +52,8 @@ const Home = () => {
         <AddForm onClick={() => navigate("/create-contact")} />
       </WrapperTitle>
       <Input
-        value={name}
-        onChange={(event) => setSearchName(event.target.value)}
+        value={query}
+        onChange={(event) => setQuery(event.target.value)}
         placeholder="Search your contact"
         inputType="search"
       />
