@@ -1,23 +1,36 @@
-import { Search as SearchIcon } from "@mui/icons-material";
-import { Person as PersonIcon } from "@mui/icons-material";
+import {
+  Search as SearchIcon,
+  LocalPhone as LocalPhoneIcon,
+  Person as PersonIcon,
+  RemoveRounded as RemoveRoundedIcon,
+} from "@mui/icons-material";
 import styled from "@emotion/styled";
 
 interface PropsInput {
   value: string;
   onChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
-  type?: string;
+  inputType?: string;
   placeholder: string;
+  name?: string;
+  onDeletePhone?: () => void | undefined
 }
 
-const Input = ({ value, onChange, type, ...rest }: PropsInput) => {
-  
+const Input = ({
+  value,
+  onChange,
+  inputType,
+  onDeletePhone,
+  ...rest
+}: PropsInput) => {
   const RenderIcon = () => {
-    switch (type) {
+    switch (inputType) {
       case "search":
         return <SearchButton />;
       case "first_name":
       case "last_name":
-        return <IconUser />
+        return <IconUser />;
+      case "phone":
+        return <IconPhone />;
       default:
         return <SearchButton />;
     }
@@ -27,6 +40,11 @@ const Input = ({ value, onChange, type, ...rest }: PropsInput) => {
     <WrapperInput>
       <InputText type="text" value={value} onChange={onChange} {...rest} />
       <RenderIcon />
+      {inputType === "phone" && (
+        <div onClick={onDeletePhone} onKeyDown={onDeletePhone}>
+          <IconRemove />
+        </div>
+      )}
     </WrapperInput>
   );
 };
@@ -62,6 +80,24 @@ const IconUser = styled(PersonIcon)`
   width: 20px;
   height: 20px;
   color: #4a4a4a;
+`;
+
+const IconPhone = styled(LocalPhoneIcon)`
+  position: absolute;
+  left: 10px;
+  top: 10px;
+  width: 20px;
+  height: 20px;
+  color: #4a4a4a;
+`;
+
+const IconRemove = styled(RemoveRoundedIcon)`
+  position: absolute;
+  right: 18px;
+  top: 10px;
+  width: 20px;
+  height: 20px;
+  color: red;
 `;
 
 export default Input;

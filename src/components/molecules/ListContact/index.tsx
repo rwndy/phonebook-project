@@ -7,19 +7,11 @@ interface PropsListContact {
 
 const ListContact = ({ contact }: PropsListContact) => {
   return (
-    <CardWrapper key={contact.id}>
+    <CardWrapper onClick={() => alert(contact.first_name)}>
       <NameContact>
         <strong>{contact.first_name}</strong> {contact.last_name}
       </NameContact>
       <PhoneNumber>mobile phone: {contact.phones[0].number}</PhoneNumber>
-      {/* <p>
-                {contact.phones.map((phone: phones, phoneIndex: number) => (
-                  <span key={phoneIndex}>
-                    Phone Number: {phone.number}
-                    {phoneIndex < contact.phones.length - 1 && <br />}
-                  </span>
-                ))}
-              </p> */}
     </CardWrapper>
   );
 };

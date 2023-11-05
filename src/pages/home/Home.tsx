@@ -5,13 +5,16 @@ import { Input, Pagination, ListContact } from "../../components";
 import { GET_CONTACT_LIST_QUERY } from "../../apollo/queries/getContactList";
 import { contact } from "../../Models/get_contact_list";
 import { Add as AddIcon } from "@mui/icons-material";
+import { useNavigate } from "react-router-dom";
 
 const Home = () => {
   const [name, setSearchName] = useState<string>("");
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [totalPages, setTotalPages] = useState<number>(0);
 
-  const { data } = useQuery(GET_CONTACT_LIST_QUERY, {
+  const navigate = useNavigate();
+
+  const { data, loading } = useQuery(GET_CONTACT_LIST_QUERY, {
     variables: {
       order_by: { first_name: "asc" },
       where: { first_name: { _like: `%${name}%` } },
@@ -38,31 +41,45 @@ const Home = () => {
     }
   };
 
+  const filteredContacts = data?.contact.filter((contact: contact) =>
+    contact.first_name.toLowerCase().includes(name.toLowerCase())
+  );
+
   return (
     <Main>
       <WrapperTitle>
         <Title>Contacts</Title>
-        <AddForm />
+        <AddForm onClick={() => navigate("/create-contact")} />
       </WrapperTitle>
       <Input
         value={name}
         onChange={(event) => setSearchName(event.target.value)}
         placeholder="Search your contact"
-        type="search"
+        inputType="search"
       />
-      <Content>
-        {data?.contact?.length > 0 &&
-          data?.contact?.map((contact: contact) => (
-            <ListContact contact={contact} />
-          ))}
-      </Content>
-      <Pagination
-        currentPage={currentPage}
-        totalPages={totalPages}
-        handleNextClick={handleNextClick}
-        handlePageChange={handlePageChange}
-        handlePrevClick={handlePrevClick}
-      />
+      {loading ? (
+        <Loading>loading...</Loading>
+      ) : (
+        <>
+          
+          <Content>
+            {filteredContacts && filteredContacts.length > 0 ? (
+              filteredContacts.map((contact: contact) => (
+                <ListContact contact={contact} key={contact.id} />
+              ))
+            ) : (
+              <NotFoundContact>No matching contacts found</NotFoundContact>
+            )}
+          </Content>
+          <Pagination
+            currentPage={currentPage}
+            totalPages={totalPages}
+            handleNextClick={handleNextClick}
+            handlePageChange={handlePageChange}
+            handlePrevClick={handlePrevClick}
+          />
+        </>
+      )}
     </Main>
   );
 };
@@ -94,6 +111,24 @@ const WrapperTitle = styled.div`
   justify-content: space-between;
   align-items: center;
   width: 100%;
+`;
+
+const Loading = styled.div`
+  font-size: 20px;
+  display: flex;
+  text-align: center;
+  justify-content: center;
+  left: 50%;
+  position: absolute;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+`;
+
+const NotFoundContact = styled.p`
+  font-size: 20px;
+  line-height: 24px;
+  text-align: center;
 `;
 
 export default Home;
