@@ -1,13 +1,22 @@
 import styled from "@emotion/styled";
 import { contact } from "../../../Models/get_contact_list";
+import { useAppContext } from "../../../context/AppContext";
 
 interface PropsListContact {
   contact: contact;
 }
 
 const ListContact = ({ contact }: PropsListContact) => {
+
+  const { setUserId, setIsModalOpen } = useAppContext()
+
+  const openModal = () => {
+    setUserId(contact.id)
+    setIsModalOpen(true)
+  }
+
   return (
-    <CardWrapper onClick={() => alert(contact.first_name)}>
+    <CardWrapper onClick={() => openModal()}>
       <NameContact>
         <strong>{contact.first_name}</strong> {contact.last_name}
       </NameContact>

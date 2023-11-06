@@ -1,11 +1,16 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { useQuery } from "@apollo/client";
 import styled from "@emotion/styled";
 import { Input, Pagination, ListContact } from "../../components";
 import { GET_CONTACT_LIST_QUERY } from "../../apollo/queries/getContactList";
 import { contact } from "../../Models/get_contact_list";
-import { Add as AddIcon } from "@mui/icons-material";
+import {
+  Add as AddIcon,
+  FavoriteRounded as FavoriteRoundedIcon,
+} from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
+import ModalDetail from "../../components/templates/ModalDetail";
+import { useAppContext } from "../../context/AppContext";
 
 const Home = () => {
   const [query, setQuery] = useState<string>("");
@@ -13,6 +18,8 @@ const Home = () => {
   const [totalPages, setTotalPages] = useState<number>(0);
 
   const navigate = useNavigate();
+
+  const { favorites, setFavorites } = useAppContext();
 
   const { data, loading } = useQuery(GET_CONTACT_LIST_QUERY, {
     variables: {
@@ -41,12 +48,23 @@ const Home = () => {
     }
   };
 
-  const filteredContacts = data?.contact.filter((contact: contact) =>
-    contact.first_name.toLowerCase().includes(query.toLowerCase())
-  );
+  const filteredFavorites = useMemo(() => {
+    const filteredArr = data?.contact.filter(
+      (item: contact) => !favorites?.some((favorite) => item.id === favorite.id)
+    );
+    return filteredArr;
+  }, [data, favorites]);
+
+  const handleRemoveFavorites = (id: number) => {
+    const removed = favorites.filter((favorite) => favorite.id !== id)
+
+    localStorage.setItem('favorites', JSON.stringify(removed));
+    setFavorites(removed)
+  }
 
   return (
     <Main>
+      <ModalDetail />
       <WrapperTitle>
         <Title>Contacts</Title>
         <AddForm onClick={() => navigate("/create-contact")} />
@@ -61,10 +79,22 @@ const Home = () => {
         <Loading>loading...</Loading>
       ) : (
         <>
-          
+          <FavoriteTitle>Favorites ({favorites.length})</FavoriteTitle>
+          {favorites.length > 0 &&
+            favorites.map((favorite) => (
+              <CardWrapper key={favorite.id}>
+                <div>
+                  <NameContact>
+                    <strong>{favorite.first_name}</strong> {favorite.last_name}
+                  </NameContact>
+                  <PhoneNumber>mobile phone: {favorite.phone}</PhoneNumber>
+                </div>
+                <IconLove onClick={() => handleRemoveFavorites(favorite.id)}/>
+              </CardWrapper>
+            ))}
           <Content>
-            {filteredContacts && filteredContacts.length > 0 ? (
-              filteredContacts.map((contact: contact) => (
+            {filteredFavorites && filteredFavorites.length > 0 ? (
+              filteredFavorites.map((contact: contact) => (
                 <ListContact contact={contact} key={contact.id} />
               ))
             ) : (
@@ -129,6 +159,36 @@ const NotFoundContact = styled.p`
   font-size: 20px;
   line-height: 24px;
   text-align: center;
+`;
+
+const CardWrapper = styled.div`
+  border-bottom: 1px solid #ebffef;
+  margin-top: 10px;
+  margin-bottom: 10px;
+  padding-bottom: 8px;
+  display: flex;
+  justify-content: space-between;
+`;
+
+const NameContact = styled.p`
+  font-size: 16px;
+  line-height: 18px;
+  margin-bottom: 4px;
+`;
+
+const PhoneNumber = styled.p`
+  font-size: 14px;
+  line-height: 18px;
+`;
+
+const IconLove = styled(FavoriteRoundedIcon)`
+  color: #f63f54;
+`;
+
+const FavoriteTitle = styled.h4`
+  font-size: 16px;
+  line-height: 18px;
+  margin-top: 10px;
 `;
 
 export default Home;

@@ -1,12 +1,13 @@
-import React from 'react';
-import ReactDOM from 'react-dom/client';
-import { ApolloProvider } from '@apollo/client';
-import client from './apollo';
+import React from "react";
+import ReactDOM from "react-dom/client";
+import { ApolloProvider } from "@apollo/client";
+import client from "./apollo";
+import { AppProvider } from "./context/AppContext";
 
-import { Global, css } from '@emotion/react';
-import Router from './router/router'
-import './index.css';
-import reportWebVitals from './reportWebVitals';
+import { Global, css } from "@emotion/react";
+import Router from "./router/router";
+import "./index.css";
+import reportWebVitals from "./reportWebVitals";
 
 const globalStyles = css`
   body {
@@ -16,15 +17,16 @@ const globalStyles = css`
   }
 `;
 
-
 const root = ReactDOM.createRoot(
-  document.getElementById('root') as HTMLElement
+  document.getElementById("root") as HTMLElement
 );
 root.render(
   <React.StrictMode>
-    <Global styles={globalStyles}/>
+    <Global styles={globalStyles} />
     <ApolloProvider client={client}>
-      <Router />
+      <AppProvider>
+        <Router />
+      </AppProvider>
     </ApolloProvider>
   </React.StrictMode>
 );
