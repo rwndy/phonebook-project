@@ -26,3 +26,11 @@ A. Develop apps:
      ```sh
      yarn start 
      ```
+
+### Include Features
+
+1. create contact
+2. add favorites
+3. remove favorites
+4. delete list contact
+5. PWA
