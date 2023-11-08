@@ -87,7 +87,7 @@ const ModalDetail = () => {
         <ModalContent isModal={isModalOpen && hasUserId}>
           <TitleModal>Detail Contact</TitleModal>
           <ContainerDetail>
-            <ContactName>First Name: {}</ContactName>
+            <ContactName>First Name: {contact?.first_name}</ContactName>
             <Gap />
             <ContactName>Last Name: {contact?.last_name}</ContactName>
             <Gap />
